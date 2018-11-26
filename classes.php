@@ -83,6 +83,37 @@ foreach ($persons as $person)
     echo $person->getFullName().PHP_EOL;
 }
 
+Class Stockman extends User
+{
+
+    function __construct($name, $accessRights)
+    {
+        $this->fullName     = $name;
+        $this->accessRights = $accessRights;
+    }
+
+    public function getFullName()
+    {
+        return $this->fullName;
+    }
+
+    public function getAccessRights()
+    {
+        return $this->accessRights;
+    }
+
+    public function setFullName($name)
+    {
+        if (gettype($name) === 'string') {
+            $this->fullName = $name;
+        }
+    }
+
+    public function setAccessRights(array $rights)
+    {
+        $this->accessRights = $rights;
+    }
+}
 
 /*
 	Director Sergey
