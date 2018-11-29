@@ -1,87 +1,120 @@
 <?php
 
-interface FullName
-{
-    public function getFullName();
-}
-
-interface FullNameAccess extends FullName
-{
-    public function getAccessRights();
-}
-
 abstract class User
 {
-    public $fullName, $accessRights;
+
+    public $fullName;
+
+    public $accessRights;
+
+    abstract public function getFullName();
+
+    abstract public function getAccessRights();
 }
 
-class Supplier extends User implements FullNameAccess
+
+class TeamLead extends User
 {
-    protected $order;
+    public $accessRights;
+    public $name;
+    public $surName;
 
-    public function getFullName()
+    public function __construct($name, $surname, $accessRights)
     {
-        return $this->fullName . "\n";
-    }
-
-    public function getAccessRights()
-    {
-        $access = ["director" => "all", "supplier" => "only orders", "worker" => "without access"];
-        foreach ($access as $key => $value) {
-            echo $access[ "supplier" ];
-        }
-    }
-
-    function do_order($order)
-    {
-        $this->order = $order; //with Vlasta?
-    }
-}
-
-Class Director extends User
-{
-
-    function __construct($name, array $accessRights)
-    {
-        $this->fullName     = $name;
+        $this->name         = $name;
+        $this->surName      = $surname;
         $this->accessRights = $accessRights;
     }
 
     public function getFullName()
     {
-        return $this->fullName;
+        return $this->name . '' . $this->surName;
     }
 
     public function getAccessRights()
     {
         return $this->accessRights;
     }
+}
 
-    public function setFullName($name)
+
+interface FullNameAccess
+{
+//    public function getAccessRights();
+}
+
+class Supplier extends User
+{
+    protected $age = 10;
+    function __construct($name, $accessRights = User::WORKER)
     {
-        if (gettype($name) === 'string') {
-            $this->fullName = $name;
+        $this->fullName     = $name;
+        $this->accessRights = $accessRights;
+    }
+
+    public $fullName, $accessRights;
+
+    public function __toString()
+    {
+        return $this->fullName . PHP_EOL;
+    }
+
+    public function __call($name, $arguments)
+    {
+        $vars    = get_object_vars($this);
+        $varName = lcfirst(substr($name, 3));
+        if ((substr($name, 0, 3) === 'get') && (array_key_exists($varName, $vars))) {
+            return $this->$varName . PHP_EOL;
         }
     }
 
-    public function setAccessRights(array $rights)
+    public function getFullName()
     {
-        $this->accessRights = $rights;
+        // TODO Дописать метод getFullName, потому что он абстрактный
+    }
+
+    public function getAccessRights()
+    {
+        // TODO Дописать метод getFullName, потому что он абстрактный
     }
 }
 
-$director = new Director('Like A Boss', ['director']);
-$supplier = new Supplier();
-$supplier->fullName = 'Nikita';
-$supplier->accessRights = 'supplier';
+Class Director extends User
+{
+    /*
+     * __CALL
+     */
+    public function __call($name, $arguments)
+    {
+        // Замечание: значение $name регистрозависимо.
+        echo "Вызов метода '$name' " . implode(', ', $arguments) . "\n";
+        $this->fullName = $arguments[ 0 ];
+    }
+    /*
+     * GET
+     */
+    public function getFullName()
+    {
+        // TODO Дописать метод getFullName, потому что он абстрактный
+    }
 
-$persons[] = $director;
+    public function getAccessRights()
+    {
+        // TODO Дописать метод getFullName, потому что он абстрактный
+    }
+}
+
+$supplier = new Supplier('Nikita', 'supplier');
+
+print $supplier->getAge();
+
 $persons[] = $supplier;
 
-foreach ($persons as $person)
-{
-    echo $person->getFullName().PHP_EOL;
+/*
+foreach ($persons as $person) {
+    echo $person->fullName;
 }
+*/
 
 Class Stockman extends User
 {
@@ -152,5 +185,5 @@ Instrument Denis
 
 Material Gleb
 
-Mechanizm  Maxim
+*/
 
